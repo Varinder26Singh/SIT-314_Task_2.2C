@@ -1,21 +1,36 @@
 #define SOIL_MOISTURE A0
 #define MOTOR 2
 
+unsigned long previousTime = 0; // Variable to store the previous time
+const unsigned long interval = 1000; // Delay interval in milliseconds (1 second)
+
 void setup() {
   Serial.begin(9600);
   pinMode(MOTOR, OUTPUT);
 }
 
-void loop() {
-  int value = analogRead(SOIL_MOISTURE);
-  Serial.println(value);
-  
-  if (value < 450)
+void loop() 
+{
+  unsigned long currentTime = millis(); // Get the current time
+
+  if (currentTime - previousTime >= interval) // Check if the interval has passed
   {
-  	digitalWrite(MOTOR, HIGH);
-  }
-  else
-  {
-    digitalWrite(MOTOR, LOW);
+    previousTime = currentTime; // Update the previous time
+
+    int value = analogRead(SOIL_MOISTURE);
+
+    if (value < 450)
+    {
+      digitalWrite(MOTOR, HIGH);
+    }
+    else
+    {
+      digitalWrite(MOTOR, LOW);
+    }
+
+    unsigned long elapsedTime = currentTime / 1000;
+    Serial.print(elapsedTime);
+    Serial.print(" , ");
+    Serial.println(value);
   }
 }
